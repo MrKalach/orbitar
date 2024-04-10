@@ -88,6 +88,13 @@ export const UserPage = observer(() => {
             refreshProfile();
         };
 
+        const daysAgoToStr = (daysAgo: number) => {
+            const titles = ['день', 'дня', 'дней'];
+            const cases = [2, 0, 1, 1, 1, 2];
+            return daysAgo === 0 ? 'сегодня'
+                : `${daysAgo} ${titles[daysAgo % 100 > 4 && daysAgo % 100 < 20 ? 2 : cases[daysAgo % 10 < 5 ? daysAgo % 10 : 5]]} назад`;
+        };
+
         return (
             <div className={styles.container}>
                 <div className={styles.header}>
@@ -97,13 +104,11 @@ export const UserPage = observer(() => {
                         </div>
 
                         <div className={styles.karma}>
-                            {user.active && <span className={styles.active}
-                                                  title={`Активно посещал${a} сайт в эту неделю`}><span
-                                className={'i i-alive'}></span>&nbsp;{sheHer ? 'активна' : 'активен'}</span>}
-                            {!user.active && <span className={styles.active}
-                                                   title={`В последнюю неделю не заходил${a} на сайт или заходил${a} недостаточно часто, чтобы считаться ${sheHer ? 'активной' : 'активным'}`}><span
-                                className={'i i-ghost'}></span>&nbsp;{sheHer ? 'неактивна' : 'неактивен'}</span>}
-
+                            <span className={styles.active}>
+                                <span className={user.active ? 'i i-alive' : 'i i-ghost'}></span>
+                                &nbsp;{user.active ? (sheHer ? 'активна' : 'активен') : (sheHer ? 'неактивна' : 'неактивен')}
+                                <span className={styles.tooltipText}>{`Был${a} в сети ${daysAgoToStr(profile.visitedDaysAgo)}`}</span>
+                            </span>
                             <RatingSwitch rating={rating} type='user' id={user.id} double={true} votingDisabled={!restrictions?.canVoteKarma} onVote={handleOnVote}/>
                         </div>
                     </div>
