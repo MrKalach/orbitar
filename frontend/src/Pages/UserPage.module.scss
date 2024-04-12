@@ -126,3 +126,13 @@
     visibility: visible;
     opacity: 1;
 }
+
+@media only screen and (max-width: 1180px) {
+  .active .tooltipText {
+    margin-left: 50px;
+  }
+
+  .active .tooltipText::after {
+    margin-left: -45px;
+  }
+}
