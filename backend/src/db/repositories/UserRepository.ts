@@ -196,7 +196,7 @@ export default class UserRepository {
         `, {user_id: userId, visited_at: dateToInsert});
     }
 
-    async getUserLastVisited(userId: number): Promise<Date> {
+    async getUserLastVisited(userId: number): Promise<Date | null> {
         const res = await this.db.fetchOne(`
             select max(visited_at) from activity_db.user_activity where user_id=:user_id`,
             {user_id: userId});

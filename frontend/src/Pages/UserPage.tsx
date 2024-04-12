@@ -15,6 +15,7 @@ import {UserGender, UserProfileInfo} from '../Types/UserInfo';
 import UserProfileSettings from '../Components/UserProfileSettings';
 import UserProfileBio from '../Components/UserProfileBio';
 import UserProfileName from '../Components/UserProfileName';
+import moment from 'moment';
 
 export const UserPage = observer(() => {
     const {userInfo, userRestrictions: restrictions} = useAppState();
@@ -88,13 +89,6 @@ export const UserPage = observer(() => {
             refreshProfile();
         };
 
-        const daysAgoToStr = (daysAgo: number) => {
-            const titles = ['день', 'дня', 'дней'];
-            const cases = [2, 0, 1, 1, 1, 2];
-            return daysAgo === 0 ? 'сегодня'
-                : `${daysAgo} ${titles[daysAgo % 100 > 4 && daysAgo % 100 < 20 ? 2 : cases[daysAgo % 10 < 5 ? daysAgo % 10 : 5]]} назад`;
-        };
-
         return (
             <div className={styles.container}>
                 <div className={styles.header}>
@@ -107,7 +101,11 @@ export const UserPage = observer(() => {
                             <span className={styles.active}>
                                 <span className={user.active ? 'i i-alive' : 'i i-ghost'}></span>
                                 &nbsp;{user.active ? (sheHer ? 'активна' : 'активен') : (sheHer ? 'неактивна' : 'неактивен')}
-                                <span className={styles.tooltipText}>{`Был${a} в сети ${daysAgoToStr(profile.visitedDaysAgo)}`}</span>
+                                { profile.visitedDaysAgo != null &&
+                                    <span className={styles.tooltipText}>
+                                        {`Был${a} в сети ${profile.visitedDaysAgo ? moment.duration(-profile.visitedDaysAgo, 'days').humanize(true) : 'сегодня'}`}
+                                    </span>
+                                }
                             </span>
                             <RatingSwitch rating={rating} type='user' id={user.id} double={true} votingDisabled={!restrictions?.canVoteKarma} onVote={handleOnVote}/>
                         </div>

@@ -18,7 +18,6 @@ import {FeedSorting} from '../api/types/entities/common';
 import TheParser from '../parser/TheParser';
 import {UserCache} from './UserCache';
 import {aesDecryptFromBase64, aesEncryptToBase64} from '../parser/CryptoUtils';
-import moment from 'moment';
 
 const USER_RESTRICTIONS = {
     MIN_KARMA: -1000,
@@ -698,13 +697,11 @@ export default class UserManager {
         return this.userCache.getPublicKey(userId);
     }
 
-    async getUserVisitedDaysAgo(userId: number): Promise<number> {
+    async getUserVisitedDaysAgo(userId: number): Promise<number | null> {
         const lastVisited = await this.userRepository.getUserLastVisited(userId);
 
-        const daysAgo =  lastVisited ?
-            moment().diff(lastVisited, "days") : 0;
-
-        return daysAgo;
+        return lastVisited ?
+            Math.floor(Math.abs(new Date().getTime() - lastVisited.getTime()) / (3600 * 24 * 1000)) : null;
     }
 
 }
